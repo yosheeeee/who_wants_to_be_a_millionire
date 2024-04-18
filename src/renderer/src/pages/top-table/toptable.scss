@@ -1,0 +1,29 @@
+#top-table{
+  h1{
+    font-size: 30px;
+    color: white;
+
+    a{
+      margin-right: 20px;
+    }
+  }
+
+  table{
+    border-collapse: collapse;
+    min-width: 50%;
+
+    thead{
+      font-weight: bold;
+    }
+
+    tr,td{
+      border: 1px solid white;
+    }
+
+    td{
+      font-size: 20px;
+      padding: 5px 10px;
+      color: white;
+    }
+  }
+}

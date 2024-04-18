@@ -1,0 +1,76 @@
+body{
+  --body-bg-color: #28006e;
+  background-color: var(--body-bg-color);
+  font-family: sans-serif;
+
+  #root{
+
+  }
+
+  a{
+    color: white;
+    text-decoration: none;
+
+    &:hover{
+      text-decoration: underline;
+    }
+  }
+
+  @for $i from 1 through 100{
+    .fz-#{$i}{
+      font-size: #{$i}px;
+    }
+
+    .gap-#{$i}{
+      gap: #{$i}px;
+    }
+  }
+
+  .flex{
+    display: flex;
+  }
+  .grid{
+    display: grid;
+  }
+  .align-center{
+    align-items: center;
+  }
+  .align-start{
+    align-items: flex-start;
+  }
+  .align-end{
+    align-items: flex-end;
+  }
+  .align-stretch{
+    align-items: stretch;
+  }
+
+  .justify-center{
+    justify-content: center;
+  }
+
+  .justify-end{
+    justify-content: flex-end;
+  }
+
+  .justify-start{
+    justify-content: flex-start;
+  }
+
+  .justify-between{
+    justify-content: space-between;
+  }
+
+  .justify-around{
+    justify-content: space-around;
+  }
+
+  .flex-column{
+    flex-direction: column;
+  }
+
+  .flex-row{
+    flex-direction: row;
+  }
+
+}
