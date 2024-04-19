@@ -1,30 +1,40 @@
 import { Link } from "react-router-dom";
 import "./toptable.scss"
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { FontAwesomeIcon } from '@fortawesome/react-fontawesome'
+import { faHouse } from '@fortawesome/free-solid-svg-icons'
 
 interface IUser{
-  name: string,
-  sum: number
+  user_name: string,
+  user_record: number
 }
 
 export default function TopTalbe(){
-  const [users, setUsers]  = useState<IUser[]>([{
-    name: "Кирилл",
-    sum: 5,
-  }]);
+  const ipc = window.electron.ipcRenderer
+
+  useEffect(() => {
+    ipc.invoke('getUserTopList')
+      .then(data => data as IUser)
+      .then(data => setUsers(data))
+  }, []);
+
+  const [users, setUsers]  = useState<IUser[]>([]);
+
   return (
     <section id="top-table">
-      <h1><Link to='../'>Назад</Link> Таблица лидеров</h1>
+      <h2>
+        <Link to='../'><FontAwesomeIcon icon={faHouse}/></Link>
+      </h2>
+      <h1>Таблица лидеров</h1>
       {
         users.length === 0 ?
 
           <h2>Таблица пуста</h2>
-
           :
-
           <table>
             <thead>
               <tr>
+                <td></td>
                 <td>
                   Имя
                 </td>
@@ -34,10 +44,12 @@ export default function TopTalbe(){
               </tr>
             </thead>
             <tbody>
-              {users.map(user => <tr>
-                <td>{user.name}</td>
-                <td>{user.sum}</td>
-              </tr>)}
+              {users.map((user, index) => (<tr>
+                <td>{index + 1}</td>
+                <td>{user.user_name}</td>
+                <td>{user.user_record}</td>
+              </tr>)
+              )}
             </tbody>
           </table>
       }

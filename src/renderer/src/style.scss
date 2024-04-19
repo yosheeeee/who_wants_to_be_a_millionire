@@ -1,11 +1,15 @@
+html{
+  background: rgb(63,29,85);
+  background: linear-gradient(156deg, rgba(63,29,85,1) 0%, rgba(70,12,126,1) 36%, rgba(61,5,147,1) 68%, rgba(9,8,191,1) 100%);   font-family: sans-serif;
+  min-width: 100vw;
+  min-height: 100vh;
+}
 body{
-  --body-bg-color: #28006e;
-  background-color: var(--body-bg-color);
-  font-family: sans-serif;
-
   #root{
 
   }
+
+  color: white;
 
   a{
     color: white;
