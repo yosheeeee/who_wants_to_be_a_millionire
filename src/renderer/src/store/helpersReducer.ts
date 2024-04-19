@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit'
 
-export interface IHelper{
-  isDisabled: boolean,
-  isActive: boolean,
-  name: string,
+export interface IHelper {
+  isDisabled: boolean
+  isActive: boolean
+  name: string
 }
 
-const initialState : IHelper[] = [
+const initialState: IHelper[] = [
   {
     isActive: false,
     isDisabled: true,
@@ -18,7 +18,7 @@ const initialState : IHelper[] = [
     name: 'Право на ошибку'
   },
   {
-    name: "Звонок другу",
+    name: 'Звонок другу',
     isDisabled: true,
     isActive: false
   },
@@ -38,15 +38,51 @@ const helpersReducer = createSlice({
   name: 'helpers',
   initialState: initialState,
   reducers: {
-      toggleEnableHelper(state, action: PayloadAction<string>){
-         state.map(helper => {
-           if (helper.name == action.payload){
-             helper.isDisabled = !helper.isDisabled
-           }
-         })
-      }
+    toggleEnableHelper(state, action: PayloadAction<string>) {
+      state.map((helper) => {
+        if (helper.name == action.payload) {
+          helper.isDisabled = !helper.isDisabled
+        }
+      })
+    },
+
+    disableAllHelpers() {
+      return initialState
+    },
+
+    activateHelper(state, action: PayloadAction<string>) {
+      state.map((helper) => {
+        if (helper.name == action.payload) {
+          helper.isActive = true
+        }
+      })
+    },
+
+    unactivateHelper(state, action: PayloadAction<string>) {
+      state.map((helper) => {
+        if (helper.name == action.payload) {
+          helper.isActive = false
+          helper.isDisabled = true
+        }
+      })
+    },
+    unactivateAllHelpers(state) {
+      state.map((helper) => {
+        if (helper.isActive) {
+          helper.isActive = false
+          helper.isDisabled = true
+        }
+      })
+    }
   }
-})
+}
+)
 
 export default helpersReducer.reducer
-export const {toggleEnableHelper} = helpersReducer.actions
+export const {
+  unactivateAllHelpers,
+  toggleEnableHelper,
+  unactivateHelper,
+  disableAllHelpers,
+  activateHelper
+} = helpersReducer.actions

@@ -1,31 +1,32 @@
-#top-table{
+#top-table {
   position: absolute;
   top: 50%;
   left: 50%;
-  transform: translate(-50%,-50%);
+  transform: translate(-50%, -50%);
   min-width: 50%;
-  h1{
+  h1 {
     font-size: 30px;
     color: white;
 
-    a{
+    a {
       margin-right: 20px;
     }
   }
 
-  table{
+  table {
     border-collapse: collapse;
     min-width: 100%;
 
-    thead{
+    thead {
       font-weight: bold;
     }
 
-    tr,td{
+    tr,
+    td {
       border: 1px solid white;
     }
 
-    td{
+    td {
       font-size: 20px;
       padding: 5px 10px;
       color: white;

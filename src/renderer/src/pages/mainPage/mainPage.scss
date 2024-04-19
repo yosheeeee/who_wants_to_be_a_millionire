@@ -1,20 +1,18 @@
-#main{
-
-  #main-image{
+#main {
+  #main-image {
     max-height: 60vh;
     max-width: 100%;
     object-fit: contain;
   }
 
-  .buttons{
-    a{
-      color:white;
+  .buttons {
+    a {
+      color: white;
       text-decoration: none;
 
-      &:hover{
+      &:hover {
         text-decoration: underline;
       }
     }
   }
-
 }

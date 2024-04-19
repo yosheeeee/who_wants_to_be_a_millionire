@@ -1,26 +1,22 @@
 import { app, shell, BrowserWindow, ipcMain } from 'electron'
-import { join, } from 'path'
+import { join } from 'path'
 import { electronApp, optimizer, is } from '@electron-toolkit/utils'
 import icon from '../../resources/icon.png?asset'
 import { IUser } from '../renderer/src/store/userReducer'
 
 // модуль для работы с базой данных
-const knex = require("knex")(
-  {
-    client: 'sqlite3',
-    connection: {
-      filename: 'questions.sqlite'
-    },
-    useNullAsDefault: true,
-    pool:{
-      afterCreate: (conn, cb) => {
-        conn.run('PRAGMA foreing_keys = ON', cb)
-      }
+const knex = require('knex')({
+  client: 'sqlite3',
+  connection: {
+    filename: 'questions.sqlite'
+  },
+  useNullAsDefault: true,
+  pool: {
+    afterCreate: (conn, cb) => {
+      conn.run('PRAGMA foreing_keys = ON', cb)
     }
   }
-)
-
-
+})
 
 function createWindow(): void {
   // Create the browser window.
@@ -69,19 +65,21 @@ app.whenReady().then(() => {
   })
 
   ipcMain.handle('getUserTopList', async () => {
-     return await knex.select('user_name','user_record').from('users').orderBy('user_record','desc').limit(10)
+    return await knex
+      .select('user_name', 'user_record')
+      .from('users')
+      .orderBy('user_record', 'desc')
+      .limit(10)
   })
 
-  ipcMain.handle('getRandomQuestion', async (_event, level : number) => {
-      const questions = await knex('questions').where({question_level : level})
-      console.log(level)
-      let question =questions[getRandomInt(questions.length)]
-      console.log(question)
-      return question
+  ipcMain.handle('getRandomQuestion', async (_event, level: number) => {
+    const questions = await knex('questions').where({ question_level: level })
+    let question = questions[getRandomInt(questions.length)]
+    return question
   })
 
-  ipcMain.on('saveUserData' , async (_event, user : IUser ) => {
-    await knex('users').insert({user_name: user.name, user_record: user.sum})
+  ipcMain.on('saveUserData', async (_event, user: IUser) => {
+    await knex('users').insert({ user_name: user.name, user_record: user.sum })
   })
 
   createWindow()
@@ -92,9 +90,9 @@ app.whenReady().then(() => {
     if (BrowserWindow.getAllWindows().length === 0) createWindow()
   })
 })
-app.commandLine.appendSwitch('ignore-gpu-blacklist');
-app.commandLine.appendSwitch('disable-gpu');
-app.commandLine.appendSwitch('disable-gpu-compositing');
+app.commandLine.appendSwitch('ignore-gpu-blacklist')
+app.commandLine.appendSwitch('disable-gpu')
+app.commandLine.appendSwitch('disable-gpu-compositing')
 
 // Quit when all windows are closed, except on macOS. There, it's common
 // for applications and their menu bar to stay active until the user quits
@@ -108,6 +106,6 @@ app.on('window-all-closed', () => {
 // In this file you can include the rest of your app"s specific main process
 // code. You can also put them in separate files and require them here.
 
-function getRandomInt(max : number){
+function getRandomInt(max: number) {
   return Math.floor(Math.random() * max)
 }

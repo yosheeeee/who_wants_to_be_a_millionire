@@ -1,42 +1,64 @@
-#game{
+#game {
   display: flex;
   align-items: center;
   justify-content: center;
   flex-direction: column;
   gap: 20px;
-  #game-logo{
-    img{
+
+  #game-logo {
+    img {
       max-width: 100%;
       max-height: 50vh;
       object-fit: contain;
     }
   }
 
-  .header-container{
+  .header-container {
     display: flex;
     align-items: center;
-    .current-sum{
+    justify-content: space-between;
+    width: calc(100% - 40px);
+
+    .current-sum {
       font-size: 20px;
-      .sum{
+
+      .sum {
         font-size: 30px;
+      }
+    }
+
+    button {
+      font-size: 18px;
+      padding: 5px 10px;
+      border: 1px solid white;
+      color: white;
+      background: none;
+      border-radius: 5px;
+      cursor: pointer;
+      transition: 200ms;
+
+      &:hover {
+        color: black;
+        background-color: white;
       }
     }
   }
 
-  .question-container{
+  .question-container {
     width: calc(100% - 40px);
-      .question{
-        font-size: 18px;
-      }
+
+    .question {
+      font-size: 18px;
+    }
   }
 
-  .variants{
+  .variants {
     width: calc(100% - 40px);
     display: grid;
     grid-template-columns: 1fr 1fr;
     gap: 20px 40px;
 
-    button{
+    button {
       font-size: 20px;
       padding: 8px 15px;
       border-radius: 8px;
@@ -46,11 +68,63 @@
       cursor: pointer;
       transition: 200ms;
 
-      &:hover{
+      &:hover {
         color: black;
         background-color: white;
-        border-color: black
+        border-color: black;
       }
+
+      &[disabled] {
+        background-color: red;
+        border-color: red;
+        color: white;
+        cursor: default;
+      }
+    }
+  }
+
+  #blur {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+
+    #modal-window {
+      border-radius: 8px;
+      padding: 20px;
+      background: white;
+      color: black;
+      h4{
+        font-size: 20px;
+      }
+
+      form{
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        flex-direction: column;
+        gap: 10px;
+        input{
+          font-size: 20px;
+          width: 100%;
+          margin: 0;
+          border: 1px solid black;
+          border-radius: 5px;
+          background: none;
+          padding: 5px 10px;
+        }
+      }
+    }
+  }
+
+  .VictoryContainer{
+    svg{
+      width: 50% !important;
+      margin: 0 auto;
+      display: block;
+    }
+    tspan{
+      fill: white !important;
     }
   }
 }

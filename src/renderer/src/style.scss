@@ -1,80 +1,85 @@
-html{
-  background: rgb(63,29,85);
-  background: linear-gradient(156deg, rgba(63,29,85,1) 0%, rgba(70,12,126,1) 36%, rgba(61,5,147,1) 68%, rgba(9,8,191,1) 100%);   font-family: sans-serif;
+html {
+  background: rgb(63, 29, 85);
+  background: linear-gradient(
+    156deg,
+    rgba(63, 29, 85, 1) 0%,
+    rgba(70, 12, 126, 1) 36%,
+    rgba(61, 5, 147, 1) 68%,
+    rgba(9, 8, 191, 1) 100%
+  );
+  font-family: sans-serif;
   min-width: 100vw;
   min-height: 100vh;
 }
-body{
-  #root{
-
+body {
+  #root {
   }
 
   color: white;
 
-  a{
+  a {
     color: white;
     text-decoration: none;
 
-    &:hover{
+    &:hover {
       text-decoration: underline;
     }
   }
 
-  @for $i from 1 through 100{
-    .fz-#{$i}{
+  @for $i from 1 through 100 {
+    .fz-#{$i} {
       font-size: #{$i}px;
     }
 
-    .gap-#{$i}{
+    .gap-#{$i} {
       gap: #{$i}px;
     }
   }
 
-  .flex{
+  .flex {
     display: flex;
   }
-  .grid{
+  .grid {
     display: grid;
   }
-  .align-center{
+  .align-center {
     align-items: center;
   }
-  .align-start{
+  .align-start {
     align-items: flex-start;
   }
-  .align-end{
+  .align-end {
     align-items: flex-end;
   }
-  .align-stretch{
+  .align-stretch {
     align-items: stretch;
   }
 
-  .justify-center{
+  .justify-center {
     justify-content: center;
   }
 
-  .justify-end{
+  .justify-end {
     justify-content: flex-end;
   }
 
-  .justify-start{
+  .justify-start {
     justify-content: flex-start;
   }
 
-  .justify-between{
+  .justify-between {
     justify-content: space-between;
   }
 
-  .justify-around{
+  .justify-around {
     justify-content: space-around;
   }
 
-  .flex-column{
+  .flex-column {
     flex-direction: column;
   }
 
-  .flex-row{
+  .flex-row {
     flex-direction: row;
   }
-
 }
