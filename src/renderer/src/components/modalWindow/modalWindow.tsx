@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react'
 import { useDispatch } from 'react-redux'
 import { unactivateHelper } from '../../store/helpersReducer'
+import TimeLimitSound from "../../assets/sounds/time-limit.mp3"
 
 export function getRandomArbitrary(min, max) : number {
   return Math.floor(Math.random() * (max - min) + min)
@@ -13,6 +14,9 @@ export default function ModalWindow({disableWrongAnswers} : {disableWrongAnswers
   const dispatch = useDispatch()
   const [seconds, setSeconds] = useState(10)
   const [isEnded, setIsEnded] = useState(false)
+  const timeLimitAudio = new Audio(TimeLimitSound)
+  timeLimitAudio.volume = 0.2
+
 
   function tick(){
     if (isEnded) {
@@ -32,6 +36,7 @@ export default function ModalWindow({disableWrongAnswers} : {disableWrongAnswers
 
   useEffect(() => {
     if (isEnded){
+      timeLimitAudio.play()
       dispatch(unactivateHelper('Звонок другу'))
     }
   }, [isEnded])

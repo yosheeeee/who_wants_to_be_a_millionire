@@ -2,13 +2,16 @@ import { useEffect, useState } from 'react'
 import GameLogoSrc from '../../assets/default-image.jpg'
 import './game.scss'
 import { useDispatch } from 'react-redux'
-import { setSum, setUser } from '../../store/userReducer'
+import { setSum } from '../../store/userReducer'
 import { useNavigate } from 'react-router-dom'
 import { useTypedSelector } from '../../store/store'
 import { activateHelper, toggleEnableHelper, unactivateAllHelpers, unactivateHelper } from '../../store/helpersReducer'
 import ModalWindow, { getRandomArbitrary } from '../../components/modalWindow/modalWindow'
-import { Cell, Pie, PieChart, ResponsiveContainer } from 'recharts'
 import { VictoryPie } from 'victory'
+import RoundMusicSrc from "../../assets/sounds/level.mp3"
+import RightAnswerMusicSrc from "../../assets/sounds/right-answer.mp3"
+import WrongAnswerSoundSrc from "../../assets/sounds/wrong-answer.mp3"
+import HelperSoundSrc from "../../assets/sounds/helper-sound.mp3"
 
 
 interface IQuestion {
@@ -34,6 +37,11 @@ export default function Game() {
   const dispatch = useDispatch()
   const navigate = useNavigate()
   const helpers = useTypedSelector((state) => state.helpers)
+  const levelAudio = new Audio(RoundMusicSrc)
+  const rightAnswerAudio = new Audio(RightAnswerMusicSrc)
+  const wrongAnswerAudio = new Audio(WrongAnswerSoundSrc)
+  const helperAudio = new Audio(HelperSoundSrc)
+  levelAudio.volume = rightAnswerAudio.volume = wrongAnswerAudio.volume = helperAudio.volume = 0.2
 
   const [answersDisabled, setAnswersDisabled] = useState([
     false, false, false, false
@@ -43,7 +51,9 @@ export default function Game() {
   function answerClickHandler(e: React.MouseEvent<HTMLButtonElement>, button_index: number) {
     if (e.target?.value == currentQuestion?.right_answer) {
       setCurrentLevel((prevState) => prevState + 1)
+      rightAnswerAudio.play()
     } else {
+      wrongAnswerAudio.play()
       if (helpers[1].isActive) {
         setAnswersDisabled(prevState => {
           const newState = [...prevState]
@@ -53,6 +63,10 @@ export default function Game() {
         dispatch(unactivateHelper(helpers[1].name))
       } else {
         dispatch(setSum(currentSum))
+        rightAnswerAudio.pause()
+        helperAudio.pause()
+        levelAudio.pause()
+        wrongAnswerAudio.pause()
         navigate('../game-over')
       }
     }
@@ -66,6 +80,7 @@ export default function Game() {
 
   //подгрузка вопроса
   useEffect(() => {
+    levelAudio.play()
     setCurrentSum(sums[currentLevel - 1])
     ipc
       .invoke('getRandomQuestion', currentLevel)
@@ -74,7 +89,6 @@ export default function Game() {
 
     setAnswersDisabled([false, false, false, false])
     dispatch(unactivateAllHelpers())
-
   }, [currentLevel])
 
   //обработка кнопок-подсказок
@@ -136,7 +150,11 @@ export default function Game() {
           helpers.map((helper, index) => {
             if (helper.isDisabled == false) {
               return (
-                <button onClick={e => dispatch(activateHelper(helper.name))}>{helper.name}</button>
+                <button onClick={e => {
+                  helperAudio.play()
+                  dispatch(activateHelper(helper.name))
+                }
+              }>{helper.name}</button>
               )
             } else {
               return <></>
@@ -195,10 +213,10 @@ export default function Game() {
 }
 
 function HelpOfTheHall({ question }: { question: IQuestion }) {
-  const [answ1, setAnsw1] = useState(question.right_answer == 1 ? getRandomArbitrary(20,60) : getRandomArbitrary(1, 20))
-  const [answ2, setAnsw2] = useState(question.right_answer == 2 ? getRandomArbitrary(20,60) : getRandomArbitrary(1, 20))
-  const [answ3, setAnsw3] = useState(question.right_answer == 3 ? getRandomArbitrary(20,60) : getRandomArbitrary(1, 20))
-  const [answ4, setAnsw4] = useState(question.right_answer == 4 ? getRandomArbitrary(20,60) : getRandomArbitrary(1, 20))
+  const [answ1] = useState(question.right_answer == 1 ? getRandomArbitrary(20,60) : getRandomArbitrary(1, 20))
+  const [answ2] = useState(question.right_answer == 2 ? getRandomArbitrary(20,60) : getRandomArbitrary(1, 20))
+  const [answ3] = useState(question.right_answer == 3 ? getRandomArbitrary(20,60) : getRandomArbitrary(1, 20))
+  const [answ4] = useState(question.right_answer == 4 ? getRandomArbitrary(20,60) : getRandomArbitrary(1, 20))
 
 
   return <VictoryPie data={[
