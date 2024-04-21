@@ -5,13 +5,12 @@ import { useEffect } from 'react'
 import { useDispatch } from 'react-redux'
 import { clearUser } from '../../store/userReducer'
 import { disableAllHelpers } from '../../store/helpersReducer'
-import MainPageSound from "../../assets/sounds/main-page.mp3"
+import MainPageSound from '../../assets/sounds/main-page.mp3'
 
 export default function MainPage(): JSX.Element {
   const dispatch = useDispatch()
   const audio = new Audio(MainPageSound)
   audio.volume = 0.2
-
 
   useEffect(() => {
     dispatch(clearUser())
@@ -19,7 +18,7 @@ export default function MainPage(): JSX.Element {
     audio.play()
   }, [])
 
-  function stopMusicOnLeaving(){
+  function stopMusicOnLeaving() {
     audio.pause()
   }
 

@@ -94,17 +94,17 @@
       padding: 20px;
       background: white;
       color: black;
-      h4{
+      h4 {
         font-size: 20px;
       }
 
-      form{
+      form {
         display: flex;
         align-items: center;
         justify-content: center;
         flex-direction: column;
         gap: 10px;
-        input{
+        input {
           font-size: 20px;
           width: 100%;
           margin: 0;
@@ -117,13 +117,13 @@
     }
   }
 
-  .VictoryContainer{
-    svg{
+  .VictoryContainer {
+    svg {
       width: 50% !important;
       margin: 0 auto;
       display: block;
     }
-    tspan{
+    tspan {
       fill: white !important;
     }
   }

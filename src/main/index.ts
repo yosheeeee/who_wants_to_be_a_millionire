@@ -74,7 +74,7 @@ app.whenReady().then(() => {
 
   ipcMain.handle('getRandomQuestion', async (_event, level: number) => {
     const questions = await knex('questions').where({ question_level: level })
-    let question = questions[getRandomInt(questions.length)]
+    const question = questions[getRandomInt(questions.length)]
     return question
   })
 

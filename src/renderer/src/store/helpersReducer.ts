@@ -75,8 +75,7 @@ const helpersReducer = createSlice({
       })
     }
   }
-}
-)
+})
 
 export default helpersReducer.reducer
 export const {

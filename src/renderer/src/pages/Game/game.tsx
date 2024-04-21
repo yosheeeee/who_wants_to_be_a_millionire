@@ -5,14 +5,18 @@ import { useDispatch } from 'react-redux'
 import { setSum } from '../../store/userReducer'
 import { useNavigate } from 'react-router-dom'
 import { useTypedSelector } from '../../store/store'
-import { activateHelper, toggleEnableHelper, unactivateAllHelpers, unactivateHelper } from '../../store/helpersReducer'
+import {
+  activateHelper,
+  toggleEnableHelper,
+  unactivateAllHelpers,
+  unactivateHelper
+} from '../../store/helpersReducer'
 import ModalWindow, { getRandomArbitrary } from '../../components/modalWindow/modalWindow'
 import { VictoryPie } from 'victory'
-import RoundMusicSrc from "../../assets/sounds/level.mp3"
-import RightAnswerMusicSrc from "../../assets/sounds/right-answer.mp3"
-import WrongAnswerSoundSrc from "../../assets/sounds/wrong-answer.mp3"
-import HelperSoundSrc from "../../assets/sounds/helper-sound.mp3"
-
+import RoundMusicSrc from '../../assets/sounds/level.mp3'
+import RightAnswerMusicSrc from '../../assets/sounds/right-answer.mp3'
+import WrongAnswerSoundSrc from '../../assets/sounds/wrong-answer.mp3'
+import HelperSoundSrc from '../../assets/sounds/helper-sound.mp3'
 
 interface IQuestion {
   question_text: string
@@ -31,31 +35,33 @@ export const sums = [
 
 export default function Game() {
   const ipc = window.electron.ipcRenderer
+
   const [currentLevel, setCurrentLevel] = useState(1)
   const [currentQuestion, setCurrentQuestion] = useState<IQuestion>()
   const [currentSum, setCurrentSum] = useState(0)
+  const [answersDisabled, setAnswersDisabled] = useState([false, false, false, false])
+
   const dispatch = useDispatch()
   const navigate = useNavigate()
-  const helpers = useTypedSelector((state) => state.helpers)
-  const levelAudio = new Audio(RoundMusicSrc)
-  const rightAnswerAudio = new Audio(RightAnswerMusicSrc)
-  const wrongAnswerAudio = new Audio(WrongAnswerSoundSrc)
-  const helperAudio = new Audio(HelperSoundSrc)
-  levelAudio.volume = rightAnswerAudio.volume = wrongAnswerAudio.volume = helperAudio.volume = 0.2
 
-  const [answersDisabled, setAnswersDisabled] = useState([
-    false, false, false, false
-  ])
+  const helpers = useTypedSelector((state) => state.helpers)
+  // const [levelAudio, setLevelAudio] = useState(new Audio(RoundMusicSrc))
+  const [rightAnswerAudio, setRightAnswerAudio] = useState(new Audio(RightAnswerMusicSrc))
+  const [wrongAnswerAudio, setWrongAnswerAudio] = useState(new Audio(WrongAnswerSoundSrc))
+  const [helperAudio, setHelperAudio] = useState(new Audio(HelperSoundSrc))
 
   // обработка нажатия на ответ
-  function answerClickHandler(e: React.MouseEvent<HTMLButtonElement>, button_index: number) {
+  function answerClickHandler(e: React.MouseEvent<HTMLButtonElement>, button_index: number): void {
     if (e.target?.value == currentQuestion?.right_answer) {
       setCurrentLevel((prevState) => prevState + 1)
-      rightAnswerAudio.play()
+      setRightAnswerAudio((state) => {
+        state.play()
+        return state
+      })
     } else {
       wrongAnswerAudio.play()
       if (helpers[1].isActive) {
-        setAnswersDisabled(prevState => {
+        setAnswersDisabled((prevState) => {
           const newState = [...prevState]
           newState[button_index] = true
           return newState
@@ -63,30 +69,38 @@ export default function Game() {
         dispatch(unactivateHelper(helpers[1].name))
       } else {
         dispatch(setSum(currentSum))
-        rightAnswerAudio.pause()
-        helperAudio.pause()
-        levelAudio.pause()
-        wrongAnswerAudio.pause()
+        setRightAnswerAudio((prev) => {
+          return null
+        })
+        setRightAnswerAudio((prev) => {
+          return null
+        })
+        setHelperAudio(null)
+        // setLevelAudio(null)
         navigate('../game-over')
       }
     }
   }
 
-  function disableWrongAnswers() {
-    setAnswersDisabled(prevState => {
-      return prevState.map((v, index) => index != currentQuestion?.right_answer - 1)
+  function disableWrongAnswers(): void {
+    setAnswersDisabled((prevState) => {
+      return prevState.map((_v, index) => index != currentQuestion?.right_answer - 1)
     })
   }
 
   //подгрузка вопроса
   useEffect(() => {
-    levelAudio.play()
+    if (currentLevel == 1) {
+      // setLevelAudio((prevState) => {
+      //   prevState.play()
+      //   return prevState
+      // })
+    }
     setCurrentSum(sums[currentLevel - 1])
     ipc
       .invoke('getRandomQuestion', currentLevel)
       .then((data) => data as IQuestion)
       .then((data) => setCurrentQuestion(data))
-
     setAnswersDisabled([false, false, false, false])
     dispatch(unactivateAllHelpers())
   }, [currentLevel])
@@ -98,7 +112,7 @@ export default function Game() {
       let c = 0
       for (let i = 1; i < 5; i++) {
         if (i != currentQuestion?.right_answer) {
-          setAnswersDisabled(prevState => {
+          setAnswersDisabled((prevState) => {
             const newState = [...prevState]
             newState[i - 1] = true
             return newState
@@ -121,9 +135,10 @@ export default function Game() {
 
     //кнопка замены вопроса
     else if (helpers[4].isActive) {
-      ipc.invoke('getRandomQuestion', currentLevel)
-        .then(data => data as IQuestion)
-        .then(data => setCurrentQuestion(data))
+      ipc
+        .invoke('getRandomQuestion', currentLevel)
+        .then((data) => data as IQuestion)
+        .then((data) => setCurrentQuestion(data))
         .finally(() => {
           dispatch(unactivateHelper(helpers[4].name))
         })
@@ -137,8 +152,7 @@ export default function Game() {
   return (
     <div id="game">
       <div id="game-logo">
-        <img src={GameLogoSrc}
-             alt="game logo" />
+        <img src={GameLogoSrc} alt="game logo" />
       </div>
 
       <div className="header-container">
@@ -146,21 +160,25 @@ export default function Game() {
           Текущая сумма: <span className="sum">{currentSum}</span>
         </div>
 
-        <div className="help-buttons flex align-center gap-20">{
-          helpers.map((helper, index) => {
+        <div className="help-buttons flex align-center gap-20">
+          {helpers.map((helper, _index) => {
             if (helper.isDisabled == false) {
               return (
-                <button onClick={e => {
-                  helperAudio.play()
-                  dispatch(activateHelper(helper.name))
-                }
-              }>{helper.name}</button>
+                // eslint-disable-next-line react/jsx-key
+                <button
+                  onClick={(e) => {
+                    helperAudio.play()
+                    dispatch(activateHelper(helper.name))
+                  }}
+                >
+                  {helper.name}
+                </button>
               )
             } else {
               return <></>
             }
-          })
-        }</div>
+          })}
+        </div>
       </div>
 
       <div className="question-container">
@@ -168,28 +186,35 @@ export default function Game() {
         {currentQuestion ? <div className="question">{currentQuestion.question_text}</div> : <></>}
       </div>
 
-
       <div className="variants">
         {currentQuestion ? (
           <>
-            <button disabled={answersDisabled[0]}
-                    value={1}
-                    onClick={e => answerClickHandler(e, 0)}>
+            <button
+              disabled={answersDisabled[0]}
+              value={1}
+              onClick={(e) => answerClickHandler(e, 0)}
+            >
               1) {currentQuestion.question_answer_1}
             </button>
-            <button disabled={answersDisabled[1]}
-                    value={2}
-                    onClick={e => answerClickHandler(e, 1)}>
+            <button
+              disabled={answersDisabled[1]}
+              value={2}
+              onClick={(e) => answerClickHandler(e, 1)}
+            >
               2) {currentQuestion.question_answer_2}
             </button>
-            <button disabled={answersDisabled[2]}
-                    value={3}
-                    onClick={e => answerClickHandler(e, 2)}>
+            <button
+              disabled={answersDisabled[2]}
+              value={3}
+              onClick={(e) => answerClickHandler(e, 2)}
+            >
               3) {currentQuestion.question_answer_3}
             </button>
-            <button disabled={answersDisabled[3]}
-                    value={4}
-                    onClick={e => answerClickHandler(e, 3)}>
+            <button
+              disabled={answersDisabled[3]}
+              value={4}
+              onClick={(e) => answerClickHandler(e, 3)}
+            >
               4) {currentQuestion.question_answer_4}
             </button>
           </>
@@ -198,39 +223,45 @@ export default function Game() {
         )}
       </div>
 
-      {
-        helpers[0].isActive && currentQuestion ?
-          <HelpOfTheHall question={currentQuestion} />
-          : <></>
-      }
+      {helpers[0].isActive && currentQuestion ? (
+        <HelpOfTheHall question={currentQuestion} />
+      ) : (
+        <></>
+      )}
 
-      {
-        helpers[2].isActive ? <ModalWindow disableWrongAnswers={disableWrongAnswers} /> : ''
-      }
-
+      {helpers[2].isActive ? <ModalWindow disableWrongAnswers={disableWrongAnswers} /> : ''}
     </div>
   )
 }
 
 function HelpOfTheHall({ question }: { question: IQuestion }) {
-  const [answ1] = useState(question.right_answer == 1 ? getRandomArbitrary(20,60) : getRandomArbitrary(1, 20))
-  const [answ2] = useState(question.right_answer == 2 ? getRandomArbitrary(20,60) : getRandomArbitrary(1, 20))
-  const [answ3] = useState(question.right_answer == 3 ? getRandomArbitrary(20,60) : getRandomArbitrary(1, 20))
-  const [answ4] = useState(question.right_answer == 4 ? getRandomArbitrary(20,60) : getRandomArbitrary(1, 20))
+  const [answ1] = useState(
+    question.right_answer == 1 ? getRandomArbitrary(20, 60) : getRandomArbitrary(1, 20)
+  )
+  const [answ2] = useState(
+    question.right_answer == 2 ? getRandomArbitrary(20, 60) : getRandomArbitrary(1, 20)
+  )
+  const [answ3] = useState(
+    question.right_answer == 3 ? getRandomArbitrary(20, 60) : getRandomArbitrary(1, 20)
+  )
+  const [answ4] = useState(
+    question.right_answer == 4 ? getRandomArbitrary(20, 60) : getRandomArbitrary(1, 20)
+  )
 
-
-  return <VictoryPie data={[
-    { x: '1', y: answ1 },
-    { x: '2', y: answ2 },
-    { x: '3', y: answ3 },
-    {x : '4', y: answ4 },
-  ]}
-                     colorScale={['tomato', 'orange', 'gold', 'cyan']}
-                     animate={{ duration: 500 }}
-                     width={500}
-                     height={200}
-  startAngle={90}
-  endAngle={-90}/>
+  return (
+    <VictoryPie
+      data={[
+        { x: '1', y: answ1 },
+        { x: '2', y: answ2 },
+        { x: '3', y: answ3 },
+        { x: '4', y: answ4 }
+      ]}
+      colorScale={['tomato', 'orange', 'gold', 'cyan']}
+      animate={{ duration: 500 }}
+      width={500}
+      height={200}
+      startAngle={90}
+      endAngle={-90}
+    />
+  )
 }
-
-
